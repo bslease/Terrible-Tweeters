@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
+    [SerializeField] Sprite _deadSprite;
+    [SerializeField] ParticleSystem _particleSystem;
+    bool _hasDied;
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (ShouldDieFromCollision(collision))
@@ -13,8 +17,11 @@ public class Monster : MonoBehaviour
         }
     }
 
-    private bool ShouldDieFromCollision(Collision2D collision)
+    bool ShouldDieFromCollision(Collision2D collision)
     {
+        if (_hasDied)
+            return false;
+
         Bird bird = collision.gameObject.GetComponent<Bird>();
         if (bird != null)
             return true;
@@ -25,9 +32,12 @@ public class Monster : MonoBehaviour
         return false;
     }
 
-    private void Die()
+    void Die()
     {
-        gameObject.SetActive(false);
+        _hasDied = true;
+        GetComponent<SpriteRenderer>().sprite = _deadSprite;
+        _particleSystem.Play();
+        //gameObject.SetActive(false);
     }
 
 }
